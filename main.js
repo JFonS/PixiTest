@@ -12,7 +12,7 @@ var kernel = [{
     x: 0,
     y: 0
 }, {
-    x: 20,
+    x: 45,
     y: 5
 }, {
     x: 10,
@@ -63,12 +63,13 @@ function expandKernel(kernel, n) {
     return result;
 }
 
-function getShape(kernel, n) {
+function getShape(kernel, n, fillColor) {
     n = n || 4;
     var polygon = expandKernel(kernel, n);
     var result = new PIXI.Graphics();
     result.cacheAsBitmap = true;
-    result.lineStyle(3, 0xFFF000, 300);
+    result.lineStyle(3, 0x111111, 0);
+    result.beginFill(fillColor);
     result.drawPolygon(polygon); //doesn't have a broken corner now
     return result;
 }
@@ -91,7 +92,9 @@ var offset = {
 
 for (var i = -n; i <= n; ++i) {
     for (var j = -n; j <= n; ++j) {
-        var shape = getShape(kernel, 4);
+        var fillColor = 0xb7d2f7;
+        if (xor(i % 2 == 0, j % 2 == 0)) fillColor = 0xf4f4f4;
+        var shape = getShape(kernel, 4,fillColor);
         stage.addChild(shape);
         shape.position.set(offset.x + vector.x * i + perp.x * j,offset.y + vector.y * i + perp.y * j);
     }

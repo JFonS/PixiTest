@@ -7,6 +7,10 @@ Array.prototype.last = function() {
     return this.slice(-1)[0];
 }
 
+function xor(a,b) {
+  return ( a || b ) && !( a && b );
+}
+
 function toPolygon(kernel) {
     var pol = [];
     kernel.forEach(function(p) {
