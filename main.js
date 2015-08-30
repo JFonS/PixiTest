@@ -2,7 +2,7 @@
 var stage = new PIXI.Stage(0x000000);
 
 // create a renderer instance
-var renderer = PIXI.autoDetectRenderer(400, 300);
+var renderer = PIXI.autoDetectRenderer(800, 800);
 
 // add the renderer view element to the DOM
 document.body.appendChild(renderer.view);
@@ -12,26 +12,55 @@ var kernel = [{
     x: 0,
     y: 0
 }, {
-    x: 10,
-    y: 0
+    x: 50,
+    y: 25
 }, {
-    x: 20,
-    y: 20
+    x: 50,
+    y: 50
 }, {
     x: 35,
-    y: 10
+    y: 50
+}, {
+    x: 40,
+    y: 55
 }];
 
-function expandKernel(kernel) {
-    
-    var longKernel = rotateSpine(kernel,180);
-    var polygon = rotateSpine(longKernel, 90);
-    console.log(polygon, longKernel);
-    polygon = rotateSpine(polygon, 10, longKernel);
-    //polygon = rotateSpine(polygon, -90, longKernel);
-  
+//console.log(translateSpine(kernel, {x: 50, y: 50}));
 
-    var result = toPolygon(polygon);
+function expandKernel(kernel) {
+
+    var kernel180 = rotateSpine(kernel, kernel.last(), 180);
+    console.log(kernel180);
+    kernel180.reverse();
+    kernel180.shift();
+
+    var longKernel = kernel.concat(kernel180);
+
+    var k2 = rotateSpine(longKernel, longKernel.last(), 90);
+    k2.reverse();
+    k2.shift();
+
+
+    result = longKernel.concat(k2);
+
+
+    var firstPoint = longKernel.last();
+    var lastPoint = result.last();
+    var vector = {x: lastPoint.x-firstPoint.x, y:  lastPoint.y-firstPoint.y}
+    var k3 = translateSpine(longKernel, vector);
+    console.log(k3);
+    k3.reverse();
+    k3.shift();
+
+    result = result.concat(k3);
+
+    var k4 = rotateSpine(longKernel, longKernel[0], -90);
+    k4.reverse();
+    k4.shift();
+    result = result.concat(k4);
+  
+    console.log("result", result);
+    var result = toPolygon(result);
     return result;
 }
 
@@ -40,7 +69,7 @@ var result = new PIXI.Graphics();
 result.lineStyle(1, 0xFFF000, 1);
 result.drawPolygon(expandKernel(kernel)); //doesn't have a broken corner now
 stage.addChild(result);
-result.position.set(110,110);
+result.position.set(300,300);
 
 
 
