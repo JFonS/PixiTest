@@ -12,17 +12,17 @@ var kernel = [{
     x: 0,
     y: 0
 }, {
-    x: 50,
-    y: 25
+    x: 20,
+    y: 5
 }, {
-    x: 50,
-    y: 50
+    x: 10,
+    y: 30
 }, {
-    x: 35,
-    y: 50
+    x: 15,
+    y: 35
 }, {
-    x: 40,
-    y: 55
+    x: 45,
+    y: 20
 }];
 
 //console.log(translateSpine(kernel, {x: 50, y: 50}));
@@ -32,46 +32,70 @@ function expandKernel(kernel, n) {
     n = n || 4;
 
     var kernel180 = rotateSpine(kernel, kernel.last(), 180);
-    console.log(kernel180);
     kernel180.reverse();
     kernel180.shift();
 
     var longKernel = kernel.concat(kernel180);
 
-    var k2 = rotateSpine(longKernel, longKernel.last(), 360/n);
-    k2.reverse();
-    k2.shift();
+    result = longKernel.clone();
 
+    for (var i = 1; i < n; i++) {
+        //console.log(i, result);
+        var firstPoint = longKernel[0];
+        var lastPoint = result.last();
+        var vector = {
+            x: lastPoint.x - firstPoint.x,
+            y: lastPoint.y - firstPoint.y
+        }
 
-    result = longKernel.concat(k2);
+        //console.log(firstPoint, lastPoint, vector);
 
+        var tKernel = translateSpine(longKernel, vector);
+        longKernel = rotateSpine(tKernel, result.last(), 360 / n);
+        var k2 = longKernel.clone();
+        k2.shift();
 
-    var firstPoint = longKernel.last();
-    var lastPoint = result.last();
-    var vector = {x: lastPoint.x-firstPoint.x, y:  lastPoint.y-firstPoint.y}
-    var k3 = translateSpine(longKernel, vector);
-    console.log(k3);
-    k3.reverse();
-    k3.shift();
+        result = result.concat(k2);
+    };
 
-    result = result.concat(k3);
-
-    var k4 = rotateSpine(longKernel, longKernel[0], -360/n);
-    k4.reverse();
-    k4.shift();
-    result = result.concat(k4);
-  
-    console.log("result", result);
+    //console.log("result", result);
     var result = toPolygon(result);
     return result;
 }
 
+function getShape(kernel, n) {
+    n = n || 4;
+    var polygon = expandKernel(kernel, n);
+    var result = new PIXI.Graphics();
+    result.cacheAsBitmap = true;
+    result.lineStyle(3, 0xFFF000, 300);
+    result.drawPolygon(polygon); //doesn't have a broken corner now
+    return result;
+}
 
-var result = new PIXI.Graphics();
-result.lineStyle(1, 0xFFF000, 1);
-result.drawPolygon(expandKernel(kernel, 3)); //doesn't have a broken corner now
-stage.addChild(result);
-result.position.set(300,300);
+var n = 5;
+var firstPoint = kernel[0];
+var lastPoint = kernel.last();
+var vector = {
+    x: (lastPoint.x - firstPoint.x) * 2,
+    y: (lastPoint.y - firstPoint.y) * 2
+}
+
+var perp =  {x: vector.y * -1, y: vector.x}
+console.log(vector, perp);
+
+var offset = {
+    x: 300,
+    y: 300
+};
+
+for (var i = -n; i <= n; ++i) {
+    for (var j = -n; j <= n; ++j) {
+        var shape = getShape(kernel, 4);
+        stage.addChild(shape);
+        shape.position.set(offset.x + vector.x * i + perp.x * j,offset.y + vector.y * i + perp.y * j);
+    }
+}
 
 
 
@@ -81,5 +105,3 @@ function animate() {
 
     renderer.render(stage);
 }
-
-
