@@ -17,6 +17,8 @@ function toPolygon(kernel) {
 }
 
 function rotatePoint(point, center, angle) {
+    if (point.x === center.x && point.y === center.y) return point.clone();
+    
     angle = (angle) * (Math.PI / 180); // Convert to radians
 
     var rotatedX = Math.cos(angle) * (point.x - center.x) - Math.sin(angle) * (point.y - center.y) + center.x;

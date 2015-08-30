@@ -27,7 +27,9 @@ var kernel = [{
 
 //console.log(translateSpine(kernel, {x: 50, y: 50}));
 
-function expandKernel(kernel) {
+function expandKernel(kernel, n) {
+
+    n = n || 4;
 
     var kernel180 = rotateSpine(kernel, kernel.last(), 180);
     console.log(kernel180);
@@ -36,7 +38,7 @@ function expandKernel(kernel) {
 
     var longKernel = kernel.concat(kernel180);
 
-    var k2 = rotateSpine(longKernel, longKernel.last(), 90);
+    var k2 = rotateSpine(longKernel, longKernel.last(), 360/n);
     k2.reverse();
     k2.shift();
 
@@ -54,7 +56,7 @@ function expandKernel(kernel) {
 
     result = result.concat(k3);
 
-    var k4 = rotateSpine(longKernel, longKernel[0], -90);
+    var k4 = rotateSpine(longKernel, longKernel[0], -360/n);
     k4.reverse();
     k4.shift();
     result = result.concat(k4);
@@ -67,7 +69,7 @@ function expandKernel(kernel) {
 
 var result = new PIXI.Graphics();
 result.lineStyle(1, 0xFFF000, 1);
-result.drawPolygon(expandKernel(kernel)); //doesn't have a broken corner now
+result.drawPolygon(expandKernel(kernel, 3)); //doesn't have a broken corner now
 stage.addChild(result);
 result.position.set(300,300);
 
