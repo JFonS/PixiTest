@@ -28,7 +28,7 @@ var kernel = [{
     y: 30
 }];
 
-var sides = 4;
+var sides = 6;
 
 var container = drawTiled(kernel, sides, {x: 30, y: 30}, {x: 400, y: 400});
 stage.addChild(container);

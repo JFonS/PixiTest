@@ -70,7 +70,7 @@ function getTexture(kernel, n, fillColor) {
 }
 
 function drawTiled(kernel, sides, pos, size) {
-
+    
     //Mask
     var mask = new PIXI.Graphics();
     mask.beginFill();
@@ -86,12 +86,12 @@ function drawTiled(kernel, sides, pos, size) {
     //Vector
     if (sides == 6) {
       var firstPoint = kernel[0];
-      var lastPoint = kernel.last();
+      var lastPoint = rotatePoint(firstPoint,kernel.last(),60);
       var vector = {
           x: (lastPoint.x - firstPoint.x) * 2,
           y: (lastPoint.y - firstPoint.y) * 2
       }
-      
+
       var perp = rotatePoint(vector, {x: 0,y: 0}, -360 / sides);
     } else {
       var firstPoint = kernel[0];
@@ -105,8 +105,8 @@ function drawTiled(kernel, sides, pos, size) {
     }
     
 
-    var nX = 25; //Math.ceil(size.x/vector.x);
-    var nY = 25; //Math.ceil(size.y/vector.y);
+    var nX = 1; //Math.ceil(size.x/vector.x);
+    var nY = 1; //Math.ceil(size.y/vector.y);
 
     //Offset
     var offset = {
