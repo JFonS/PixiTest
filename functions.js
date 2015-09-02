@@ -54,7 +54,7 @@ function expandKernel(kernel, n) {
     return result;
 }
 
-function getTexture(kernel, n, fillColor) {
+function getTexture(kernel, n, fillColor, fillColor2) {
 
     var polygon = expandKernel(kernel, n);
     var result = new PIXI.Graphics();
@@ -62,15 +62,76 @@ function getTexture(kernel, n, fillColor) {
     result.beginFill(fillColor);
     result.drawPolygon(polygon);
     var bounds = result.getBounds();
-    
     var texture = new PIXI.RenderTexture(renderer, bounds.width, bounds.height);
-
     texture.render(result);
+
+
     return texture;
 }
 
+function drawTiled3(kernel, pos, size) {
+
+    var sides = 3;
+
+    //Mask
+    var mask = new PIXI.Graphics();
+    mask.beginFill();
+    mask.drawRect(0, 0, size.x, size.y);
+    mask.endFill();
+
+    //Container
+    var container = new PIXI.Container();
+    container.mask = mask;
+    container.position.set(pos.x, pos.y);
+    container.addChild(mask);
+
+    //Background
+    var bg = new PIXI.Graphics();
+    bg.beginFill(0xf4f4f4);
+    bg.drawRect(0, 0, size.x, size.y);
+    bg.endFill();
+    container.addChild(bg);
+
+    //Vector
+    var firstPoint = kernel[0];
+    var lastPoint = kernel.last();
+    var vector = {
+        x: (lastPoint.x - firstPoint.x) * 2,
+        y: (lastPoint.y - firstPoint.y) * 2
+    }
+
+    var perp = rotatePoint(vector, {
+        x: 0,
+        y: 0
+    }, -60);
+
+    console.log(vector, perp);
+
+    var nX = Math.ceil(size.x / vector.x);
+    var nY = Math.ceil(size.y / vector.y);
+
+    //Offset
+    var offset = {
+        x: size.x / 2,
+        y: size.y / 2
+    };
+
+    var fillColor = 0xb7d2f7;
+    texture = getTexture(kernel, sides, fillColor);
+    //renderer.backgroundColor = 0xf4f4f4;
+
+    for (var i = -nY; i <= nY; ++i) {
+        for (var j = -nX; j <= nX; ++j) {
+            var sprite = new PIXI.Sprite(texture);
+            container.addChild(sprite);
+            sprite.position.set(offset.x + vector.x * i + perp.x * j, offset.y + vector.y * i + perp.y * j);
+        }
+    }
+    return container;
+}
+
 function drawTiled4(kernel, pos, size) {
-    
+
     var sides = 4;
 
     //Mask
@@ -90,14 +151,17 @@ function drawTiled4(kernel, pos, size) {
     var firstPoint = kernel[0];
     var lastPoint = kernel.last();
     var vector = {
-      x: (lastPoint.x - firstPoint.x) * 2,
-      y: (lastPoint.y - firstPoint.y) * 2
+        x: (lastPoint.x - firstPoint.x) * 2,
+        y: (lastPoint.y - firstPoint.y) * 2
     }
 
-    var perp = {x: -vector.y, y: vector.x};
+    var perp = {
+        x: -vector.y,
+        y: vector.x
+    };
 
-    var nX = Math.ceil(size.x/vector.x);
-    var nY = Math.ceil(size.y/vector.y);
+    var nX = Math.ceil(size.x / vector.x);
+    var nY = Math.ceil(size.y / vector.y);
 
     //Offset
     var offset = {
@@ -130,7 +194,7 @@ function drawTiled4(kernel, pos, size) {
 }
 
 function drawTiled6(kernel, pos, size) {
-    
+
     var sides = 6;
 
     //Mask
@@ -147,20 +211,23 @@ function drawTiled6(kernel, pos, size) {
 
     //Vector
     var firstPoint = kernel[0];
-    var lastPoint = rotatePoint(firstPoint,kernel.last(),-120);
+    var lastPoint = rotatePoint(firstPoint, kernel.last(), -120);
 
     var vector = {
-      x: (lastPoint.x - firstPoint.x)*2,
-      y: (lastPoint.y - firstPoint.y)*2
+        x: (lastPoint.x - firstPoint.x) * 2,
+        y: (lastPoint.y - firstPoint.y) * 2
     }
 
     console.log(firstPoint, kernel.last(), lastPoint, vector);
 
-    var perp = rotatePoint(vector, {x: 0,y: 0}, 120);
-    
+    var perp = rotatePoint(vector, {
+        x: 0,
+        y: 0
+    }, 120);
 
-    var nX = Math.ceil(Math.abs(size.x/vector.x));
-    var nY = Math.ceil(Math.abs(size.y/vector.y));
+
+    var nX = Math.ceil(Math.abs(size.x / vector.x));
+    var nY = Math.ceil(Math.abs(size.y / vector.y));
 
     //Offset
     var offset = {
@@ -176,23 +243,26 @@ function drawTiled6(kernel, pos, size) {
     fillColor = 0xf4f4f4;
     textures[1] = getTexture(kernel, sides, fillColor);
 
-    fillColor = 0xf433f4;
+    fillColor = 0x888888;
     textures[2] = getTexture(kernel, sides, fillColor);
 
     var xOff = (nX % 2 == 0) ? 0 : 1;
     var yOff = (nY % 2 == 0) ? 0 : 1;
-    console.log("lalqaasdasdasdla");
+
     for (var i = -nY; i <= nY; ++i) {
         for (var j = -nX; j <= nX; ++j) {
-            console.log("lalqala");
-            var texture = Math.abs(i) % 3;
-            var texture = 0;
-            if ((Math.abs(i) + xOff) % 3 == 1 || (Math.abs(j) + yOff) % 3 == 1) texture = 1;
-            if ((Math.abs(i) + xOff) % 3 == 2 || (Math.abs(j) + yOff) % 3 == 2)  texture = 2;
+
+            var texture = Math.abs(999999999 + i + j) % 3;
             var sprite = new PIXI.Sprite(textures[texture]);
             container.addChild(sprite);
             sprite.position.set(offset.x + vector.x * i + perp.x * j, offset.y + vector.y * i + perp.y * j);
         }
     }
     return container;
+}
+
+function drawTiled(kernel, sides, pos, size) {
+    if (sides == 3) return drawTiled3(kernel,pos,size);
+    if (sides == 4) return drawTiled4(kernel,pos,size);
+    if (sides == 6) return drawTiled6(kernel,pos,size);
 }

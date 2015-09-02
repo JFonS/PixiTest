@@ -15,12 +15,6 @@ var kernel = [{
     x: 10,
     y: 10
 },{
-    x: 25,
-    y: 27
-},{
-    x: 5,
-    y: 15
-},{
     x: 5,
     y: 30
 },{
@@ -30,7 +24,7 @@ var kernel = [{
 
 var sides = 3;
 
-var container = drawTiled6(kernel, {x: 30, y: 30}, {x: 1000, y: 1000});
+var container = drawTiled(kernel, sides, {x: 0, y: 0}, {x: window.innerWidth, y: 500});
 stage.addChild(container);
 
 renderer.render(stage);
