@@ -181,13 +181,14 @@ function drawTiled6(kernel, pos, size) {
 
     var xOff = (nX % 2 == 0) ? 0 : 1;
     var yOff = (nY % 2 == 0) ? 0 : 1;
-console.log("lalqaasdasdasdla");
+    console.log("lalqaasdasdasdla");
     for (var i = -nY; i <= nY; ++i) {
         for (var j = -nX; j <= nX; ++j) {
             console.log("lalqala");
+            var texture = Math.abs(i) % 3;
             var texture = 0;
-            if ((i + xOff) % 3 == 0) texture = 1;
-            if ((j + yOff) % 3 == 2) texture = 2;
+            if ((Math.abs(i) + xOff) % 3 == 1 || (Math.abs(j) + yOff) % 3 == 1) texture = 1;
+            if ((Math.abs(i) + xOff) % 3 == 2 || (Math.abs(j) + yOff) % 3 == 2)  texture = 2;
             var sprite = new PIXI.Sprite(textures[texture]);
             container.addChild(sprite);
             sprite.position.set(offset.x + vector.x * i + perp.x * j, offset.y + vector.y * i + perp.y * j);
