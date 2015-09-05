@@ -36,12 +36,18 @@ var kernel = [{
     y: 30
 }];
 
-var sides = 4;
+var sides = 6;
 
 
 function redraw(){
-    var container = drawTiled(kernel, sides, {x: 0, y: 250}, {x: window.innerWidth, y: 500});
+    var container = drawTiled(kernel, sides, {x: 0, y: 250}, {x: window.innerWidth, y: window.innerHeight-250});
     stage.addChild(container);
+
+    var gKernel = drawKernel(kernel);
+    gKernel.position.set(30,30);
+    stage.addChild(gKernel);
+
+    
 
     renderer.render(stage);
 }
